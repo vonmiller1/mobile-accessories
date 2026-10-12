@@ -1,2 +1,2 @@
 # mobile_accessories_sales_server
-Mobile accessories sales  backend using spring boot - java
+Mobile accessories sales backend using Spring Boot - Java
