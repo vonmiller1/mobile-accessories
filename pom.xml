@@ -5,15 +5,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.4</version>
+		<version>2.7.18</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.icbt.ap.mobileaccessoriessales</groupId>
 	<artifactId>mobile_accessories_sales_server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>mobile_accessories_sales_server</name>
-	<description>Demo project for Spring Boot</description>
+	<name>Mobile Accessories Sales Server</name>
+	<description>REST API for mobile accessories sales and inventory management</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
