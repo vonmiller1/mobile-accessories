@@ -91,6 +91,7 @@ class StockServiceImplTest {
         final Optional<Stock> optionalStock = stockRepository.findById(id);
         assertTrue(optionalStock.isPresent());
         assertEquals(optionalStock.get().getId(), stock.getId());
+        assertEquals(stock.getProductId(), optionalStock.get().getProductId());
     }
 
     @Test
