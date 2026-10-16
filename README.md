@@ -1,110 +1,33 @@
 # Mobile Accessories Sales Server
 
-A robust backend service for managing a mobile accessories sales operation using Java and Spring Boot. The system supports branch management, product catalog operations, customer records, sales agents, stock control, stock requests, and order processing through a REST API.
-
-## Overview
-
-This project provides a scalable server-side solution for a mobile accessories retail business. It exposes REST endpoints for managing inventory and sales-related workflows, including tracking stock movement, creating orders, updating request status, and retrieving sales summaries by branch and sales agent.
+REST backend for managing sales and inventory operations for a mobile accessories business. Built with Java and Spring Boot, it provides endpoints for products, branches, customers, users, sales agents, stock, stock requests, and orders.
 
 ## Features
 
-- Product catalog management
-- Branch and sales outlet administration
-- Customer management
-- Sales agent tracking
-- Inventory and stock monitoring
-- Stock request workflow and status updates
-- Order creation and sale analytics
-- RESTful API design with standardized response models
-- MySQL-backed persistence
-- Validation and centralized exception handling
+- Manage product, branch, customer, and user records
+- Track stock and process stock requests
+- Manage orders and update order statuses
+- Retrieve order totals grouped by sales agent
+- Validate API input and return consistent response objects
+- Persist application data in MySQL
 
-## Tech Stack
+## Technology
 
 - Java 11
 - Spring Boot 2.6.4
-- Spring Web
-- Spring Validation
-- Spring Data JDBC
-- MySQL Driver
-- Maven
+- Spring Web, Validation, and Data JDBC
+- MySQL
+- Maven Wrapper
 - Lombok
 
-## Project Structure
+## Requirements
 
-```text
-mobile-accessories/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/icbt/ap/mobileaccessoriessales/
-│   │   │       ├── config/
-│   │   │       ├── constant/
-│   │   │       ├── controller/
-│   │   │       ├── dto/
-│   │   │       ├── entity/
-│   │   │       ├── enums/
-│   │   │       ├── exception/
-│   │   │       ├── repository/
-│   │   │       ├── service/
-│   │   │       └── util/
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── messages/
-│   └── test/
-│       └── java/
-├── pom.xml
-├── mvnw
-├── mvnw.cmd
-├── README.md
-└── .gitignore
-```
+- Java 11 or later
+- MySQL
 
-## Core Modules
+The repository includes Maven Wrapper scripts, so a separate Maven installation is not required.
 
-The backend includes the following domain areas:
-
-- Branch management
-- Customer management
-- Product catalog
-- Sales agents
-- Vehicle handling
-- Stock management
-- Stock request processing
-- Order and sales analytics
-
-## API Base URL
-
-The application is configured with a context path of `/api` and versioned routes under `/v1`.
-
-Example base URL:
-
-```text
-http://localhost:8080/api/v1
-```
-
-## Prerequisites
-
-Before running the application, ensure you have:
-
-- Java 11 or newer
-- Maven 3.8+
-- MySQL 8.0 or compatible version
-- A MySQL database named `sales_db`
-
-## Configuration
-
-Update the database connection settings in `src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/sales_db?useSSL=false
-spring.datasource.username=root
-spring.datasource.password=your_password
-```
-
-You may also need to adjust the Hibernate and server settings according to your local environment.
-
-## Getting Started
+## Getting started
 
 ### 1. Clone the repository
 
@@ -113,61 +36,91 @@ git clone https://github.com/vonmiller1/mobile-accessories.git
 cd mobile-accessories
 ```
 
-### 2. Configure MySQL
+### 2. Create a database
 
-Create the database and ensure the credentials match your local MySQL setup.
+Create the database configured for the application:
 
 ```sql
 CREATE DATABASE sales_db;
 ```
 
-### 3. Build the project
+### 3. Configure the database connection
 
-```bash
-./mvnw clean package
+Set the MySQL URL, username, and password in `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/sales_db?useSSL=false
+spring.datasource.username=root
+spring.datasource.password=your_password
 ```
 
+Replace `your_password` with the password for your local MySQL account. Avoid committing real credentials; use environment-specific configuration for shared or production deployments.
+
 ### 4. Run the application
+
+On Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+On macOS or Linux:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Once started, the API will be available on:
+The server starts at `http://localhost:8080` with the `/api` context path.
+
+## API
+
+Version 1 endpoints are available under:
 
 ```text
-http://localhost:8080/api
+http://localhost:8080/api/v1
 ```
 
-## Example Endpoints
+The main resource paths include:
 
-The project exposes endpoints for major business operations, such as:
+| Resource | Endpoint |
+| --- | --- |
+| Branches | `/api/v1/branch` |
+| Products | `/api/v1/product` |
+| Customers | `/api/v1/customer` |
+| Users | `/api/v1/user` |
+| Sales agents | `/api/v1/sales_agent` |
+| Stock | `/api/v1/stock` |
+| Stock requests | `/api/v1/stock-request` |
+| Orders and sales totals | `/api/v1/orders` |
 
-- `/api/v1/branch`
-- `/api/v1/product`
-- `/api/v1/customer`
-- `/api/v1/user`
-- `/api/v1/sales_agent`
-- `/api/v1/stock`
-- `/api/v1/stock-request`
-- `/api/v1/orders`
+For example, the orders API provides order results, totals by sales agent, and an endpoint for updating an order's status. See the controllers under `src/main/java/com/icbt/ap/mobileaccessoriessales/controller` for supported methods and request/response details.
 
-## Testing
+## Build and test
 
-Run the test suite with:
+Run the test suite:
 
-```bash
-./mvnw test
+```powershell
+.\mvnw.cmd test
 ```
 
-## Notes
+On macOS or Linux, use `./mvnw test`. To build the deployable artifact, run `.\mvnw.cmd clean package` on Windows or `./mvnw clean package` on macOS and Linux.
 
-This is a backend-only application. It is designed to support a frontend application or external client that consumes the REST API for mobile accessories sales operations.
+## Project layout
+
+```text
+src/
+├── main/
+│   ├── java/com/icbt/ap/mobileaccessoriessales/
+│   │   ├── controller/   REST API controllers
+│   │   ├── dto/          API response objects
+│   │   ├── entity/       Domain and query models
+│   │   ├── repository/   Data access
+│   │   ├── service/      Business logic
+│   │   └── ...
+│   └── resources/        Application and message configuration
+└── test/                 Automated tests
+```
 
 ## License
 
-This project does not currently declare a specific license. If you intend to distribute or commercialize it, confirm the appropriate licensing terms before publishing.
-
-## Contact
-
-For project questions or support, contact the repository owner or maintainers through the GitHub project page.
+No license is currently specified in this repository. All rights remain with the respective copyright holders unless a license is added.
