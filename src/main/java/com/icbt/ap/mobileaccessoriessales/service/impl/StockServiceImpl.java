@@ -14,8 +14,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,7 +59,7 @@ public class StockServiceImpl implements StockService {
         }
         if (stock.getProductId() != null) {
             final Product product = productService.getById(stock.getProductId());
-            stock.setProductId(product.getId());
+            stockById.setProductId(product.getId());
         }
 
         stockRepository.update(stockById);
@@ -95,15 +98,15 @@ public class StockServiceImpl implements StockService {
     public void updateStockQty(List<StockQtyUpdateRequest> qtyUpdateRequests) {
         final List<String> stockIds = qtyUpdateRequests.stream().map(StockQtyUpdateRequest::getId).collect(Collectors.toList());
         final List<Stock> stockListByIds = validateAndGetStocksByIds(stockIds);
+        final Map<String, StockQtyUpdateRequest> requestsByStockId = new HashMap<>();
+        qtyUpdateRequests.forEach(request -> requestsByStockId.putIfAbsent(request.getId(), request));
 
-        /*filters and sets qty for the corresponding id*/
         stockListByIds.forEach(stock -> {
-            final Optional<StockQtyUpdateRequest> updateRequestOptional = qtyUpdateRequests.stream().filter(qtyUpdateRequest -> qtyUpdateRequest.getId().equals(stock.getId())).findFirst();
-            if (updateRequestOptional.isEmpty()) return;
-
+            final StockQtyUpdateRequest updateRequest = requestsByStockId.get(stock.getId());
+            if (updateRequest == null) return;
             /*calculation is always a plus (+) operation,
             therefore a qty decrease request should send minus values*/
-            stock.setQty(stock.getQty() + updateRequestOptional.get().getQty());
+            stock.setQty(stock.getQty() + updateRequest.getQty());
         });
         /*updates entire list*/
         stockRepository.updateListQty(stockListByIds);
@@ -121,8 +124,11 @@ public class StockServiceImpl implements StockService {
     /*Internal functions below*/
 
     private void validateStockReqAndResult(List<String> stockIdsReq, List<Stock> stocks) {
+        final Set<String> foundStockIds = stocks.stream()
+                .map(Stock::getId)
+                .collect(Collectors.toSet());
         stockIdsReq.forEach(stockId -> {
-            if (stocks.stream().noneMatch(stock -> stock.getId().equals(stockId))) {
+            if (!foundStockIds.contains(stockId)) {
                 throw new CustomServiceException("error.validation.common.not.found.code", "error.validation.stock.id.not.found.message", new String[]{stockId});
             }
         });
