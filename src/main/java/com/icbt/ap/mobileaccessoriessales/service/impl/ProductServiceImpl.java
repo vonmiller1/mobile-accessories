@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,8 +80,11 @@ public class ProductServiceImpl implements ProductService {
     /*Internal functions below*/
 
     private void validateStockReqAndResult(List<String> productIdsReq, List<Product> products) {
+        final Set<String> foundProductIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toSet());
         productIdsReq.forEach(productId -> {
-            if (products.stream().noneMatch(product -> product.getId().equals(productId))) {
+            if (!foundProductIds.contains(productId)) {
                 throw new CustomServiceException(
                         "error.validation.common.not.found.code",
                         "error.validation.product.id.not.found.message",
